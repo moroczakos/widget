@@ -24,6 +24,9 @@ void Application::event_loop(int XX, int YY) {
     while(gin >> ev && ev.keycode!=key_escape) {
         gout<<move_to(0,0)<<color(0,0,0)<<box(XX,YY);
 
+        _posx=ev.pos_x;
+        _posy=ev.pos_y;
+
         //if(ev.keycode == key_enter || ev.button==btn_left){
             action();
         //}
@@ -123,3 +126,12 @@ void Application::event_loop(int XX, int YY) {
     }
 }
 
+int Application::returnXpos()
+{
+    return _posx;
+}
+
+int Application::returnYpos()
+{
+    return _posy;
+}

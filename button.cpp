@@ -8,6 +8,7 @@ button::button(Application * parent,int x, int y, int sx, int sy, std::string sz
 {
     _pressed=false;
     _szoveg=szoveg;
+    _moveable=false;
 }
 
 //ha meg van nyomva, akkor visszater a felirataval

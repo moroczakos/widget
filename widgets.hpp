@@ -12,6 +12,7 @@ protected:
     Application * _parent;
     bool _focused;
     bool _grabbed;
+    bool _moveable;
 
 public:
 

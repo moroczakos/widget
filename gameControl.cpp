@@ -1,5 +1,6 @@
 #include "gameControl.h"
 #include <iostream>
+#include <math.h>
 
 bool gameControl::canTakeFigure()
 {
@@ -34,12 +35,48 @@ bool gameControl::canTakeFigure()
     return false;
 }
 
-bool gameControl::nearby(int x_from, int x_to, int y_from, int y_to)
+bool gameControl::nearby(int x_from, int y_from, int x_to, int y_to)
 {
-    if ((x_from==x_to && abs(y_from-y_to)) || (y_from==y_to && abs(x_from-x_to)))
+    if (x_from==x_to && abs(y_from-y_to)==abs(3-x_from))
     {
         return true;
     }
 
+    if (y_from==y_to && abs(x_from-x_to)==abs(3-y_from))
+    {
+        return true;
+    }
+    /*if (x_from==x_to && abs(y_from-y_to)==abs(3-x_to))
+    {
+        return true;
+    }
+
+    if (y_from==y_to && abs(x_from-x_to)==abs(3-y_to))
+    {
+        return true;
+    }*/
     return false;
+}
+
+void gameControl::turn()
+{
+    _whichPlayer++;
+    _whichPlayer%=2;
+}
+
+int gameControl::whichPlayer()
+{
+    return _whichPlayer;
+}
+
+void gameControl::setInitialVector()
+{
+    std::vector<std::vector<int> > table{ {0,-1,-1,0,-1,-1,0},
+                                 {-1,0,-1,0,-1,0,-1},
+                                 {-1,-1,0,0,0,-1,-1},
+                                 {0,0,0,-1,0,0,0},
+                                 {-1,-1,0,0,0,-1,-1},
+                                 {-1,0,-1,0,-1,0,-1},
+                                 {0,-1,-1,0,-1,-1,0} };
+    _table=table;
 }

@@ -19,6 +19,7 @@ public:
     virtual void setXcoord(int x);
     virtual void setYcoord(int y);
     virtual int whichPlayer();
+    virtual void setMoveable(bool setMoveable);
 };
 
 

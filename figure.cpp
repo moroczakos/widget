@@ -13,11 +13,15 @@ figure::figure(Application * parent,int x, int y, int sx, int sy, int whichPlaye
 
 void figure::draw()
 {
-    for (int i=-15;i<=15;i++)
+    if (_x>500 && _y>300)
     {
-        for (int j=-15;j<=15;j++)
+        _moveable=false;
+    }
+    for (int i=-18;i<=18;i++)
+    {
+        for (int j=-18;j<=18;j++)
         {
-            if ((pow(i,2)+pow(j,2))<pow(15,2))
+            if ((pow(i,2)+pow(j,2))<pow(15+_focused*2,2))
             {
                 gout << move_to(_x-i, _y-j) << color(100,100,100) << dot;
             }
@@ -27,6 +31,7 @@ void figure::draw()
             }
         }
     }
+    gout<<move_to(_x,_y)<<color(255,255,255)<<box(5,5);
 }
 
 void figure::handle(event ev)
@@ -47,11 +52,11 @@ bool figure::changedValue()
 
 bool figure::moveable()
 {
-    /*if (_x>200 && _y>100)
+    /*if (_x>500 && _y>300)
     {
         return false;
     }*/
-    return true;
+    return _moveable;
 }
 
 int figure::returnXcoord()
@@ -77,4 +82,9 @@ void figure::setYcoord(int y)
 int figure::whichPlayer()
 {
     return _whichPlayer;
+}
+
+void figure::setMoveable(bool setMoveable)
+{
+    _moveable=setMoveable;
 }

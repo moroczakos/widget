@@ -12,6 +12,7 @@ Widget::Widget(Application * parent,int x, int y, int sx, int sy) : _parent(pare
     _size_y=sy;
     _focused=false;
     _grabbed=false;
+    _moveable=true;
 }
 
 void Widget::setfocus(bool f)
@@ -80,7 +81,7 @@ void Widget::removeElement(std::string)
 
 bool Widget::moveable()
 {
-    return true;
+    return _moveable;
 }
 
 bool Widget::is_focused()
