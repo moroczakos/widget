@@ -78,6 +78,12 @@ void Widget::removeElement(std::string)
 
 }
 
+bool Widget::moveable()
+{
+    return true;
+}
 
-
-
+bool Widget::is_focused()
+{
+    return _focused;
+}

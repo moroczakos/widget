@@ -69,7 +69,7 @@ void Application::event_loop(int XX, int YY) {
                 rightclick=true;
                 for (Widget * w : widgets)
                 {
-                    if(w->insideObj(ev.pos_x, ev.pos_y))
+                    if(w->insideObj(ev.pos_x, ev.pos_y) && w->moveable())
                     {
                         if (catched)
                             catched->releaseObj();
@@ -122,3 +122,4 @@ void Application::event_loop(int XX, int YY) {
         gout << refresh;
     }
 }
+

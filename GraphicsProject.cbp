@@ -54,6 +54,10 @@
 		<Unit filename="dinamicText.hpp" />
 		<Unit filename="examplecheckbox.cpp" />
 		<Unit filename="examplecheckbox.hpp" />
+		<Unit filename="figure.cpp" />
+		<Unit filename="figure.h" />
+		<Unit filename="gameControl.cpp" />
+		<Unit filename="gameControl.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="opefileText.cpp">
 			<Option target="Debug" />

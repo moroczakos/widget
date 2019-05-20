@@ -16,6 +16,7 @@ protected:
 public:
 
     virtual void setfocus(bool f);
+    virtual bool is_focused();
     Widget(Application * parent, int x, int y, int sx, int sy);
     virtual bool is_selected(int mouse_x, int mouse_y);
     virtual void draw() = 0;
@@ -24,6 +25,7 @@ public:
     virtual bool nullValue();
     virtual bool changedValue() = 0;
     virtual void moveObj(int ex, int ey, int XX, int YY);
+    virtual bool moveable();
     virtual void catchObj(int ex, int ey);
     virtual void releaseObj();
     virtual bool insideObj(int ex, int ey);

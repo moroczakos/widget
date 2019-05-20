@@ -26,7 +26,10 @@ public:
     virtual bool changedValue();
     virtual void addElement(std::string);
     virtual void removeElement(std::string);
+    virtual int clearElement();
+    virtual void getIndex(int index);
     virtual void setElementParam();
+
 };
 
 #endif // CHOOSE_H_INCLUDED

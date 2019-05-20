@@ -244,3 +244,18 @@ void choose::removeElement(std::string reMove)
         setElementParam();
     }
 }
+
+//kitorli a vektort es visszaadja az ktualisan kijelolt elem indexet
+int choose::clearElement()
+{
+    int index=_chosenElement%_textout.size();
+    _textout.clear();
+    setElementParam();
+    return index;
+}
+
+//meghatarozza a _chosenElement erteket
+void choose::getIndex(int index)
+{
+    _chosenElement=index%_textout.size();
+}

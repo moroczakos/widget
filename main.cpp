@@ -11,6 +11,10 @@
 #include "scroll.hpp"
 #include "staticText.hpp"
 #include "dinamicText.hpp"
+#include "figure.h"
+#include <math.h>
+#include "gameControl.h"
+
 
 
 
@@ -22,146 +26,130 @@ int XX=800, YY=400;
 class MyApplication : public Application
 {
 protected:
-    int memory=0, number=0;
-    counter * count1;
-    counter * count2;
-    choose * choose1;
-    choose * choose2;
-    button * button1;
-    button * button2;
-    button * button3;
-    button * buttonPlus;
-    button * buttonDelete;
-    button * buttonEqual;
-    scroll * scroll1;
     staticText * staticText1;
-   // staticText * staticText2;
-    dinamicText * dinamicText1;
+    figure * figures;
+    vector<figure*> _figureVectorFirstPlayer, _figureVectorSecondPlayer, _allFigure;
+    int _sizeOfField = 50;
+    gameControl * rules;
 
 public:
     MyApplication(){
-
-        ///elemek atpakolasahoz innentol
-        /*choose1 = new choose(this,30,80,200,12,"befile.txt");
-        choose2 = new choose(this,300,80,150,12,"befile2.txt");
-        button1 = new button(this,500,80,30,30,"+");
-        button2 = new button(this,500,120,30,30,"->");
-        button3 = new button(this,500,160,30,30,"<-");
-        dinamicText1 = new dinamicText(this,600,80,100,30);*/
-        ///idaig
-
-        buttonPlus = new button(this,400,80,30,30,"+");
-        buttonDelete = new button(this,400,120,30,30,"Delete");
-        buttonEqual = new button(this,400,160,30,30,"=");
-        button1 = new button(this,500,80,30,30,"1");
-        button2 = new button(this,500,120,30,30,"2");
-        button3 = new button(this,500,160,30,30,"3");
-        staticText1 = new staticText(this,40,20,100,30,"");
-
-
-        //count1 = new counter(this,30,30,-10,100);
-        //count2 = new counter(this,300,30,25,75);
-
-        //scroll1 = new scroll(this,50,200,200,100,"beolvas.txt");
-        //staticText1 = new staticText(this,80,150,100,80,"Ez egy statikus szovegdoboz adbbdsssbbsavaavava");
-
-    }
-    void moveElement()
-    {
-        if (button1->changedValue())
+        staticText1 = new staticText(this,520,15,160,30,"Nine men's Morris");
+        rules = new gameControl();
+        for (int i=0;i<9;i++)
         {
-            choose1->addElement(dinamicText1->value());
+            figure * figureFirstPlayer=new figure(this,420+i*40,60,30,30,0);
+            _figureVectorFirstPlayer.push_back(figureFirstPlayer);
         }
-        if (button2->changedValue())
+
+        _allFigure=_figureVectorFirstPlayer;
+
+        for (int i=0;i<9;i++)
         {
-            std::string temp=choose1->value();
-            if (!choose1->nullValue()){
-                choose2->addElement(choose1->value());
-                choose1->removeElement(temp);
-            }
-        }
-        if (button3->changedValue())
-        {
-            std::string temp=choose2->value();
-            if (!choose2->nullValue()){
-                choose1->addElement(choose2->value());
-                choose2->removeElement(temp);
-            }
+            figure * figureSecondPlayer=new figure(this,420+i*40,100,30,30,1);
+            _figureVectorSecondPlayer.push_back(figureSecondPlayer);
+            _allFigure.push_back(figureSecondPlayer);
         }
     }
 
-    //konverterek
-    int strintToIntConverter(std::string input)
+    virtual void fieldDraw()
     {
-        int temp;
-        std::istringstream iss (input);
-        iss >> temp;
-        return temp;
+        for (int i=0;i<3;i++)
+        {
+            gout<<move_to(_sizeOfField-5+i*_sizeOfField,_sizeOfField-5+i*_sizeOfField)<<color(255,255,255)<<box_to(_sizeOfField*7+5-i*_sizeOfField,_sizeOfField*7+5-i*_sizeOfField);
+            gout<<move_to(_sizeOfField+5+i*_sizeOfField,_sizeOfField+5+i*_sizeOfField)<<color(0,0,0)<<box_to(_sizeOfField*7-5-i*_sizeOfField,_sizeOfField*7-5-i*_sizeOfField);
+        }
+
+        gout<<move_to(_sizeOfField,_sizeOfField-5+3*_sizeOfField)<<color(255,255,255)<<box_to(_sizeOfField+2*_sizeOfField,_sizeOfField+5+3*_sizeOfField);
+        gout<<move_to(_sizeOfField+4*_sizeOfField,_sizeOfField-5+3*_sizeOfField)<<color(255,255,255)<<box_to(_sizeOfField+6*_sizeOfField,_sizeOfField+5+3*_sizeOfField);
+
+        gout<<move_to(_sizeOfField-5+3*_sizeOfField,_sizeOfField)<<color(255,255,255)<<box_to(_sizeOfField+5+3*_sizeOfField,_sizeOfField+2*_sizeOfField);
+        gout<<move_to(_sizeOfField-5+3*_sizeOfField,_sizeOfField+4*_sizeOfField)<<color(255,255,255)<<box_to(_sizeOfField+5+3*_sizeOfField,_sizeOfField+6*_sizeOfField);
+
     }
-    std::string intToStringConverter(int input)
+
+    virtual void setCoord()
     {
-        std::string temp;
-        std::stringstream ss;
-        ss<<input;
-        ss>>temp;
-        return temp;
-    }
+        int xCoord, yCoord;
+        bool positionReserved;
 
-
-    enum class operation{ADD, SUBSTRACT, DIVIDE, EQUAL};
-    operation o;
-
-    //if(m==muvelet::ADD)
-
-    void calculator()
-    {
-        //osszeadas gomb lenyomasa elmenti a staticText erteket
-        if (buttonPlus->changedValue())
+        //fokuszalt babut helyere ugrasztja
+        for (figure* f : _allFigure)
         {
-            memory=number;
-            number=0;
-        }
+            xCoord=round(f->returnXcoord()/_sizeOfField);
+            yCoord=round(f->returnYcoord()/_sizeOfField);
+            if (f->is_focused())
+            {
+                if (xCoord>0 && xCoord<8 && yCoord>0 && yCoord<8 && !(xCoord==4 && yCoord==4))
+                {
+                    /*if (rules->_table[xCoord-1][yCoord-1]==0)
+                    {
+                        f->setXcoord(xCoord*_sizeOfField);
+                        f->setYcoord(yCoord*_sizeOfField);
+                    }*/
 
-        if (buttonDelete->changedValue())
-        {
-            memory/=10;
-            number=memory;
-        }
+                    if (xCoord==yCoord || xCoord+yCoord==8 || xCoord==4 || yCoord==4)// && rules->_table[xCoord-1][yCoord-1]==0)
+                    {
+                        f->setXcoord(xCoord*_sizeOfField);
+                        f->setYcoord(yCoord*_sizeOfField);
 
-        if (buttonEqual->changedValue())
-        {
-            memory+=number;
-            number=memory;
-        }
+                        if (f->whichPlayer()==0 && rules->_table[xCoord-1][yCoord-1]==0)
+                        {
+                            rules->_table[xCoord-1][yCoord-1]=1;
+                        }
+                        else if (f->whichPlayer()==1 && rules->_table[xCoord-1][yCoord-1]==0)
+                        {
+                            rules->_table[xCoord-1][yCoord-1]=2;
+                        }
 
-        if (button1->changedValue())
-        {
-            if (number==0){
-                number=strintToIntConverter(button1->value());
-            }
-            else{
-                number*=10;
-                number+=strintToIntConverter(button1->value());
-            }
-        }
+                        ///kijavitani, hogy egymasra ne lehessen tenni
 
-        if (button2->changedValue())
-        {
-            if (number==0){
-                number=strintToIntConverter(button2->value());
-            }
-            else{
-                number*=10;
-                number+=strintToIntConverter(button2->value());
+                        /*else if (!f->grabbed())
+                        {
+                            f->setXcoord(xCoord*_sizeOfField+20);
+                            f->setYcoord(yCoord*_sizeOfField+20);
+                        }*/
+                    }
+
+                }
             }
         }
-        staticText1->addElement(intToStringConverter(number));
+
+        //ha nincs az adott helyen babu akkor kinullazza az adott vektorbeli elemet
+        for (int i=0;i<7;i++)
+        {
+            for (int j=0;j<7;j++)
+            {
+                positionReserved=false;
+
+                if (!(i==3 && j==3) && (i==j || i+j==6 || i==3 || j==3))
+                {
+                    for (figure* f : _allFigure)
+                    {
+                        xCoord=f->returnXcoord()/_sizeOfField-1;
+                        yCoord=f->returnYcoord()/_sizeOfField-1;
+
+                        if (i==xCoord && j==yCoord)
+                        {
+                            positionReserved=true;
+                        }
+                    }
+                    if (!positionReserved)
+                    {
+                        rules->_table[i][j]=0;
+                    }
+                }
+            }
+        }
     }
 
     virtual void action()
     {
-        //moveElement();
-        calculator();
+        fieldDraw();
+        setCoord();
+        //std::cout<<rules->canTakeFigure();
+        std::cout<<rules->nearby(0,0,0,1);
+
     }
 };
 
