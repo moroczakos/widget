@@ -24,18 +24,24 @@ class MyApplication : public Application
 {
 protected:
     staticText * staticText1;
+    staticText * staticTextPlayer;
+    scroll * scrollRules;
     button * buttonNextPlayer;
     button * buttonNewGame;
     figure * figures;
     vector<figure*> _figureVectorFirstPlayer, _figureVectorSecondPlayer, _allFigure, _stepFigureVector;
-    int _sizeOfField = 50, formerXcoord=-1, formerYcoord=-1;
+    int _sizeOfField = 50, formerXcoord=-1, formerYcoord=-1, focusedIndex=-1;
     gameControl * rules;
+    bool _changedFocus=false;
+    int _xCoord=0, _yCoord=0;
 public:
     MyApplication(){
 
-        staticText1 = new staticText(this,520,15,160,30,"Nine men's Morris - Malom");
-        buttonNextPlayer = new button(this,400,150,150,30,"Kovetkezo jatekos");
-        buttonNewGame = new button(this,600,150,100,30,"Uj jatek");
+        staticText1 = new staticText(this,520,15,250,30,"Nine men's Morris - Malom");
+        staticTextPlayer = new staticText(this,400,170,160,30,"1. jatekos jon");
+        scrollRules = new scroll(this,500,200,250,100,"beolvas_.txt");
+        buttonNextPlayer = new button(this,400,130,150,30,"Kovetkezo jatekos");
+        buttonNewGame = new button(this,600,130,100,30,"Uj jatek");
         rules = new gameControl();
         for (int i=0;i<9;i++)
         {
@@ -51,11 +57,6 @@ public:
             _figureVectorSecondPlayer.push_back(figureSecondPlayer);
             _allFigure.push_back(figureSecondPlayer);
         }
-
-        for (figure* f : _allFigure)
-        {
-            f->setMoveable(true);
-        }
     }
 
     virtual void newGame()
@@ -68,6 +69,14 @@ public:
             _figureVectorSecondPlayer[i]->setYcoord(100);
         }
         rules->setInitialVector();
+        for (figure* f : _allFigure)
+        {
+            f->changeFocusable(true);
+        }
+        _changedFocus=false;
+        focusedIndex=-1;
+        _xCoord=0;
+        _yCoord=0;
     }
 
     virtual void fieldDraw()
@@ -92,33 +101,60 @@ public:
 
     virtual void setCoord(int wPlayer)
     {
-        int xCoord, yCoord;
         bool positionReserved;
+        int xCoord, yCoord;
 
         //a masik jatekos ne tudjon lepni az ellenfel babuival
         if (wPlayer==0)
         {
-            for (figure* f : _figureVectorFirstPlayer)
+            for (figure* f : _allFigure)
             {
-                f->setMoveable(true);
+                f->setMoveable(true); //eredetileg false
+            }
+
+            for (size_t i=0;i<_figureVectorFirstPlayer.size();i++)
+            {
+                if (!_changedFocus && _figureVectorFirstPlayer[i]->is_focused())
+                {
+                    focusedIndex=i;
+                    _changedFocus=true;
+                }
+            }
+
+            for (size_t i=0;i<_figureVectorFirstPlayer.size();i++)
+            {
+                if (focusedIndex==i)
+                {
+                    _figureVectorFirstPlayer[i]->setMoveable(true);
+                }
             }
             _stepFigureVector=_figureVectorFirstPlayer;
-            for (figure* f : _figureVectorSecondPlayer)
+        }
+
+        if (wPlayer==1)
+        {
+            for (figure* f : _allFigure)
             {
                 f->setMoveable(false);
             }
-        }
-        else
-        {
-            for (figure* f : _figureVectorSecondPlayer)
+
+            for (size_t i=0;i<_figureVectorSecondPlayer.size();i++)
             {
-                f->setMoveable(true);
+                if (!_changedFocus && _figureVectorSecondPlayer[i]->is_focused())
+                {
+                    focusedIndex=i;
+                    _changedFocus=true;
+                }
+            }
+
+            for (size_t i=0;i<_figureVectorSecondPlayer.size();i++)
+            {
+                if (focusedIndex==i)
+                {
+                    _figureVectorSecondPlayer[i]->setMoveable(true);
+                }
             }
             _stepFigureVector=_figureVectorSecondPlayer;
-            for (figure* f : _figureVectorFirstPlayer)
-            {
-                f->setMoveable(false);
-            }
         }
 
         //fokuszalt babut helyere ugrasztja
@@ -126,7 +162,7 @@ public:
         {
             xCoord=round(f->returnXcoord()/_sizeOfField);
             yCoord=round(f->returnYcoord()/_sizeOfField);
-            if (f->is_focused())
+            if (f->moveable())
             {
                 if (xCoord>0 && xCoord<8 && yCoord>0 && yCoord<8 && !(xCoord==4 && yCoord==4))
                 {
@@ -135,17 +171,15 @@ public:
                         f->setXcoord(xCoord*_sizeOfField);
                         f->setYcoord(yCoord*_sizeOfField);
 
-                        if (f->whichPlayer()==wPlayer && rules->_table[xCoord-1][yCoord-1]==0)
+                        //if (/*f->whichPlayer()==wPlayer && */rules->_table[xCoord-1][yCoord-1]==0)
                         {
-                            rules->_table[xCoord-1][yCoord-1]=wPlayer+1;
-                            //cout<<formerXcoord<<" "<<formerYcoord<<" ";//<<xCoord-1<<" ";
-                            //cout<<rules->nearby(formerXcoord,formerYcoord,xCoord-1,yCoord-1);
+                            //cout<<"belep?";
+                            //rules->_table[xCoord-1][yCoord-1]=wPlayer+1;
+                            _xCoord=xCoord;
+                            _yCoord=yCoord;
+                            //cout<<xCoord-1<<" "<<yCoord-1<<endl;
+                            //rules->tableDraw();
                         }
-                        /*else if (f->whichPlayer()==1 && rules->_table[xCoord-1][yCoord-1]==0)
-                        {
-                            rules->_table[xCoord-1][yCoord-1]=2;
-                            cout<<rules->nearby(formerXcoord,formerYcoord,xCoord-1,yCoord-1);
-                        }*/
 
                         for (figure* g : _allFigure)
                         {
@@ -155,15 +189,13 @@ public:
                                 f->setYcoord(yCoord*_sizeOfField+20);
                             }
                         }
-
-
                     }
                 }
             }
         }
 
         //ha nincs az adott helyen babu akkor kinullazza az adott vektorbeli elemet
-        for (int i=0;i<7;i++)
+        /*for (int i=0;i<7;i++)
         {
             for (int j=0;j<7;j++)
             {
@@ -189,16 +221,63 @@ public:
                     }
                 }
             }
-        }
+        }*/
     }
 
 
     virtual void makeStep()
     {
         setCoord(rules->whichPlayer());
-        if (buttonNextPlayer->changedValue())
+        if (buttonNextPlayer->changedValue() && _xCoord-1>-1 && _yCoord>-1)// && _xCoord-1<7 && _yCoord-1<7)
         {
+            //cout<<_xCoord-1<<" "<<_yCoord-1<<endl;
+            if (rules->_table[_xCoord-1][_yCoord-1]==0)
+            {
+                rules->_table[_xCoord-1][_yCoord-1]=rules->whichPlayer()+1;
+            }
+            rules->tableDraw();
+            _changedFocus=false;
             rules->turn();
+            if (rules->whichPlayer()==0)
+            {
+                staticTextPlayer->setText("1. jatekos jon");
+            }
+            else
+            {
+                staticTextPlayer->setText("2. jatekos jon");
+            }
+            _xCoord=-1;
+            _yCoord=-1;
+        }
+    }
+
+    virtual void takeFigure()
+    {
+        if(rules->canTakeFigure())
+        {
+            cout<<"malom";
+            if (rules->whichPlayer()==0)
+            {
+                for (figure* f : _figureVectorSecondPlayer)
+                {
+                    f->setMoveable(true);
+                }
+                for (figure* f : _figureVectorFirstPlayer)
+                {
+                    f->setMoveable(false);
+                }
+            }
+            else
+            {
+                for (figure* f : _figureVectorFirstPlayer)
+                {
+                    f->setMoveable(true);
+                }
+                for (figure* f : _figureVectorSecondPlayer)
+                {
+                    f->setMoveable(false);
+                }
+            }
         }
     }
 
@@ -206,6 +285,7 @@ public:
     {
         fieldDraw();
         makeStep();
+        //takeFigure();
         if (buttonNewGame->changedValue())
         {
             newGame();

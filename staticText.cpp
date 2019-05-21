@@ -57,6 +57,11 @@ void staticText::addElement(std::string add)
     _szoveg="\n"+add;
 }
 
+void staticText::setText(std::string add)
+{
+    _szoveg="\n"+add;
+}
+
 
 
 

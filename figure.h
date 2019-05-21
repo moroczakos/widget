@@ -7,6 +7,7 @@
 class figure : public Widget {
 protected:
     int _whichPlayer;
+    bool _focusable=true;
 public:
     figure(Application * parent,int x, int y, int sx, int sy, int whichPlayer);
     virtual void draw();
@@ -20,6 +21,8 @@ public:
     virtual void setYcoord(int y);
     virtual int whichPlayer();
     virtual void setMoveable(bool setMoveable);
+    virtual bool focusable();
+    virtual void changeFocusable(bool change);
 };
 
 

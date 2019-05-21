@@ -88,3 +88,13 @@ void figure::setMoveable(bool setMoveable)
 {
     _moveable=setMoveable;
 }
+
+bool figure::focusable()
+{
+    return _focusable;
+}
+
+void figure::changeFocusable(bool change)
+{
+    _focusable=change;
+}

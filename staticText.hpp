@@ -16,6 +16,7 @@ public:
     virtual bool is_selected(int mouse_x, int mouse_y);
     virtual bool focusable();
     virtual void addElement(std::string);
+    virtual void setText(std::string);
 };
 
 #endif // STATICTEXT_HPP_INCLUDED

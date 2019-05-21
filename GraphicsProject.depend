@@ -1167,19 +1167,19 @@
 	"staticText.hpp"
 	"dinamicText.hpp"
 
-1558380269 source:d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\application.cpp
+1558418274 source:d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\application.cpp
 	"application.hpp"
 	"graphics.hpp"
 	"widgets.hpp"
 	<iostream>
 
-1558377030 d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\application.hpp
+1558393743 d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\application.hpp
 	"widgets.hpp"
 	<vector>
 	<string>
 	<fstream>
 
-1558386334 d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\widgets.hpp
+1558391702 d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\widgets.hpp
 	"graphics.hpp"
 
 1555263721 d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\include\graphics.hpp
@@ -1232,7 +1232,7 @@
 	"graphics.hpp"
 	"widgets.hpp"
 
-1558389297 source:d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\main.cpp
+1558424685 source:d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\main.cpp
 	"graphics.hpp"
 	"widgets.hpp"
 	<vector>
@@ -1255,7 +1255,7 @@
 	"widgets.hpp"
 	<vector>
 
-1557148230 d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\statictext.hpp
+1558422215 d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\statictext.hpp
 	"graphics.hpp"
 	"widgets.hpp"
 
@@ -1275,29 +1275,29 @@
 	<vector>
 	<iostream>
 
-1558387828 source:d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\statictext.cpp
+1558422339 source:d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\statictext.cpp
 	"staticText.hpp"
 	"graphics.hpp"
 
-1558386335 source:d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\widgets.cpp
+1558391702 source:d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\widgets.cpp
 	"widgets.hpp"
 	"graphics.hpp"
 	"application.hpp"
 
-1558387485 source:d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\figure.cpp
+1558392796 source:d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\figure.cpp
 	"figure.h"
 	"graphics.hpp"
 	<math.h>
 
-1558386384 d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\figure.h
+1558393352 d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\figure.h
 	"graphics.hpp"
 	"widgets.hpp"
 
-1558388961 source:d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\gamecontrol.cpp
+1558419019 source:d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\gamecontrol.cpp
 	"gameControl.h"
 	<iostream>
 	<math.h>
 
-1558388961 d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\gamecontrol.h
+1558419033 d:\malom_jatek\graphicskit_widget_orai (3)\graphicskit_widget_orai\graphicskit_widget\gamecontrol.h
 	<vector>
 

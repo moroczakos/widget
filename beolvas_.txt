@@ -1,0 +1,15 @@
+A levett babut a temetobe kell tenni. 
+Nem tokeletes a jatek. Kell meg ido hozza.
+Jobb eger klikkel mozgathatok a babuk.
+
+Az eloszor fokuszalt figura mozgathato. 
+Nem ellenorni a malmot.
+Ez a jatek olyan, mint ha egy tabla lenne es figurak.
+Ami a temetobe kerult az nem szedheto ki.
+
+Szerepel a programban az ellenorzo mechaniznus
+de nem hasznalom, mert nem tudom meg 
+lekezelni a malmot.
+
+Rendes szabaly szerint jatsszuk es akkor elvezheto!
+Jo szorakozast hozza!

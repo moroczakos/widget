@@ -80,3 +80,15 @@ void gameControl::setInitialVector()
                                  {0,-1,-1,0,-1,-1,0} };
     _table=table;
 }
+
+void gameControl::tableDraw()
+{
+    for (int i=0;i<7;i++)
+    {
+        for (int j=0;j<7;j++)
+        {
+            std::cout<<_table[i][j]<<" ";
+        }
+        std::cout<<std::endl;
+    }
+}

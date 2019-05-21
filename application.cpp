@@ -106,8 +106,10 @@ void Application::event_loop(int XX, int YY) {
             if (!widgets[focus]->focusable()){
                 ++focus%=widgets.size();
             }
-            widgets[focus]->setfocus(true);
-
+            if ( widgets[focus]->focusable()) //uj
+            {
+                widgets[focus]->setfocus(true);
+            }
         }
 
         //egerkatintara fokuszba kerul
@@ -118,7 +120,11 @@ void Application::event_loop(int XX, int YY) {
                         widgets[focus]->setfocus(false);
                     }
                     focus = i;
-                    widgets[i]->setfocus(true);
+                    //widgets[i]->setfocus(true);
+                    if ( widgets[i]->focusable()) //uj
+                    {
+                        widgets[i]->setfocus(true);
+                    }
                 }
             }
         }

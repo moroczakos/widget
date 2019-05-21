@@ -19,6 +19,7 @@ public:
     virtual void turn();
     virtual int whichPlayer();
     virtual void setInitialVector();
+    virtual void tableDraw();
 
 
 
