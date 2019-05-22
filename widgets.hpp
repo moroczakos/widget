@@ -35,7 +35,4 @@ public:
     virtual void addElement(std::string);
     virtual void removeElement(std::string);
 };
-
-                                                                                                                                                                                                                                                                  //szeretnek pontlevonast kerni a beadandomra mert feltoltottem egy oktatasi segedletet sajat munka helyett :)
-
 #endif // WIDGETS_HPP_INCLUDED
