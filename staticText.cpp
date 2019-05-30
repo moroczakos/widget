@@ -7,9 +7,8 @@ staticText::staticText(Application * parent,int x, int y, int sx, int sy, std::s
     : Widget(parent,x,y,sx,sy)
 {
     _szoveg=szoveg;
-    _moveable=false;
 
-    for (size_t i=0;i<=_szoveg.size()/((_size_x)/gout.twidth("a"));i++)
+    for (int i=0;i<=_szoveg.size()/((_size_x)/gout.twidth("a"));i++)
     {
         _szoveg.insert(i*((_size_x-10)/gout.twidth("a")),"\n");
         _size_y=(i+1)*(gout.cascent()+gout.cdescent())+10;
@@ -53,11 +52,6 @@ bool staticText::focusable()
 }
 
 void staticText::addElement(std::string add)
-{
-    _szoveg="\n"+add;
-}
-
-void staticText::setText(std::string add)
 {
     _szoveg="\n"+add;
 }

@@ -25,6 +25,7 @@ public:
     virtual std::string value();
     virtual bool changedValue();
     virtual void addElement(std::string);
+    virtual void addVector(std::vector<std::string>);
     virtual void removeElement(std::string);
     virtual int clearElement();
     virtual void getIndex(int index);

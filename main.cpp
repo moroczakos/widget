@@ -11,271 +11,231 @@
 #include "scroll.hpp"
 #include "staticText.hpp"
 #include "dinamicText.hpp"
-#include "figure.h"
-#include <math.h>
-#include "gameControl.h"
+#include <set>
+#include <sstream>
 
 using namespace std;
 using namespace genv;
 
 int XX=800, YY=400;
 
+std::string intToStringConverter(int input)
+{
+    std::string temp;
+    std::stringstream ss;
+    ss<<input;
+    ss>>temp;
+    return temp;
+}
+
+struct Musor{
+    string cim;
+    int ora, perc, hossz;
+};
+
+bool operator < (Musor a, Musor b)
+{
+    if (a.ora==b.ora)
+    {
+        return a.perc<b.perc;
+    }
+    return a.ora<b.ora;
+}
+
 class MyApplication : public Application
 {
 protected:
-    staticText * staticText1;
-    staticText * staticTextPlayer;
-    scroll * scrollRules;
-    button * buttonNextPlayer;
-    button * buttonNewGame;
-    figure * figures;
-    vector<figure*> _figureVectorFirstPlayer, _figureVectorSecondPlayer, _allFigure, _stepFigureVector;
-    int _sizeOfField = 50, formerXcoord=-1, formerYcoord=-1, focusedIndex=-1;
-    gameControl * rules;
-    bool _changedFocus=false;
-    int _xCoord=0, _yCoord=0;
+    staticText * cim;
+    staticText * kezdes;
+    staticText * hossz;
+    dinamicText * nev;
+    counter * h;
+    counter * m;
+    counter * l;
+    button * hozzaad;
+    choose * opciok;
+    button * torol;
+    button * szerkeszt;
+    button * zene;
+
+    set<Musor> musor;
+    int _index=0;
+    int idorend[1440]={0};
+
+
 public:
     MyApplication(){
+        cim = new staticText(this,20,50,80,30,"cim");
+        kezdes = new staticText(this,20,100,80,30,"kezdes");
+        hossz = new staticText(this,20,150,80,30,"hossz");
+        nev = new dinamicText(this,100,50,200,30);
+        h = new counter(this,100,100,0,23);
+        m = new counter(this,200,100,0,59);
+        l = new counter(this,100,150,0,1000);
+        hozzaad = new button(this,200,150,100,30,"Hozzaad");
+        opciok = new choose(this,100,200,200,5,"");
+        torol = new button(this,100,250,80,30,"Torol");
+        szerkeszt = new button(this,200,250,80,30,"Szerkeszt");
+        zene = new button(this,300,250,80,30,"Zene");
 
-        staticText1 = new staticText(this,520,15,250,30,"Nine men's Morris - Malom");
-        staticTextPlayer = new staticText(this,400,170,160,30,"1. jatekos jon");
-        scrollRules = new scroll(this,500,200,250,100,"beolvas_.txt");
-        buttonNextPlayer = new button(this,400,130,150,30,"Kovetkezo jatekos");
-        buttonNewGame = new button(this,600,130,100,30,"Uj jatek");
-        rules = new gameControl();
-        for (int i=0;i<9;i++)
+        start();
+    }
+
+    void start()
+    {
+        Musor ujmusor;
+        ujmusor.cim="a";
+        ujmusor.ora=1;
+        ujmusor.perc=0;
+        ujmusor.hossz=10;
+        musor.insert(ujmusor);
+        ujmusor.cim="b";
+        ujmusor.ora=2;
+        ujmusor.perc=0;
+        ujmusor.hossz=10;
+        musor.insert(ujmusor);
+        ujmusor.cim="c";
+        ujmusor.ora=3;
+        ujmusor.perc=0;
+        ujmusor.hossz=100;
+        musor.insert(ujmusor);
+    }
+
+    void update()
+    {
+        _index=opciok->clearElement();
+        idorend[1440]={0};
+        for (Musor a : musor)
         {
-            figure * figureFirstPlayer=new figure(this,420+i*40,60,20,20,0);
-            _figureVectorFirstPlayer.push_back(figureFirstPlayer);
+            opciok->addElement(a.cim);
+            for (int i=a.ora*60+a.perc;i<=a.ora*60+a.perc+a.hossz;i++)
+            {
+                idorend[i%1440]=1;
+            }
         }
+        opciok->getIndex(_index);
+    }
 
-        _allFigure=_figureVectorFirstPlayer;
-
-        for (int i=0;i<9;i++)
+    void hozzaadMusort()
+    {
+        if (hozzaad->changedValue())
         {
-            figure * figureSecondPlayer=new figure(this,420+i*40,100,20,20,1);
-            _figureVectorSecondPlayer.push_back(figureSecondPlayer);
-            _allFigure.push_back(figureSecondPlayer);
+            int kezdetPercben, vegPercben;
+            bool berakhato=true;
+
+            Musor ujmusor;
+            ujmusor.cim=nev->value();
+            ujmusor.ora=h->intValue();
+            ujmusor.perc=m->intValue();
+            ujmusor.hossz=l->intValue();
+
+            kezdetPercben=h->intValue()*60+m->intValue();
+            vegPercben=kezdetPercben+l->intValue();
+
+            for (int i=kezdetPercben;i<=vegPercben;i++)
+            {
+                if (idorend[i%1440]!=0)
+                {
+                    berakhato=false;
+                }
+            }
+
+            if(berakhato)
+            {
+                musor.insert(ujmusor);
+                /*for (int i=kezdetPercben;i<=vegPercben;i++)
+                {
+                    idorend[i%1440]=1;
+                }*/
+            }
         }
     }
 
-    virtual void newGame()
+    void torolElemet()
     {
-        for (int i=0;i<9;i++)
+        if (torol->changedValue() && musor.size()>0)
         {
-            _figureVectorFirstPlayer[i]->setXcoord(420+i*40);
-            _figureVectorSecondPlayer[i]->setXcoord(420+i*40);
-            _figureVectorFirstPlayer[i]->setYcoord(60);
-            _figureVectorSecondPlayer[i]->setYcoord(100);
+            set<Musor>::iterator it=musor.begin();
+            for (int i=0;i<_index;i++)
+            {
+                it++;
+            }
+            musor.erase(it);
         }
-        rules->setInitialVector();
-        for (figure* f : _allFigure)
-        {
-            f->changeFocusable(true);
-        }
-        _changedFocus=false;
-        focusedIndex=-1;
-        _xCoord=0;
-        _yCoord=0;
     }
 
-    virtual void fieldDraw()
+    void szerkesztElemet()
     {
-        for (int i=0;i<3;i++)
+        if (szerkeszt->changedValue() && musor.size()>0)
         {
-            gout<<move_to(_sizeOfField-5+i*_sizeOfField,_sizeOfField-5+i*_sizeOfField)<<color(255,255,255)<<box_to(_sizeOfField*7+5-i*_sizeOfField,_sizeOfField*7+5-i*_sizeOfField);
-            gout<<move_to(_sizeOfField+5+i*_sizeOfField,_sizeOfField+5+i*_sizeOfField)<<color(0,0,0)<<box_to(_sizeOfField*7-5-i*_sizeOfField,_sizeOfField*7-5-i*_sizeOfField);
-        }
-
-        gout<<move_to(_sizeOfField,_sizeOfField-5+3*_sizeOfField)<<color(255,255,255)<<box_to(_sizeOfField+2*_sizeOfField,_sizeOfField+5+3*_sizeOfField);
-        gout<<move_to(_sizeOfField+4*_sizeOfField,_sizeOfField-5+3*_sizeOfField)<<color(255,255,255)<<box_to(_sizeOfField+6*_sizeOfField,_sizeOfField+5+3*_sizeOfField);
-
-        gout<<move_to(_sizeOfField-5+3*_sizeOfField,_sizeOfField)<<color(255,255,255)<<box_to(_sizeOfField+5+3*_sizeOfField,_sizeOfField+2*_sizeOfField);
-        gout<<move_to(_sizeOfField-5+3*_sizeOfField,_sizeOfField+4*_sizeOfField)<<color(255,255,255)<<box_to(_sizeOfField+5+3*_sizeOfField,_sizeOfField+6*_sizeOfField);
-
-        gout<<move_to(500,300)<<color(255,255,255)<<box_to(XX-1,YY-1);
-        gout<<move_to(500,295)<<text("Temeto");
-        gout<<move_to(510,310)<<color(0,0,0)<<box_to(XX-11,YY-11);
-
-    }
-
-    virtual void setCoord(int wPlayer)
-    {
-        bool positionReserved;
-        int xCoord, yCoord;
-
-        //a masik jatekos ne tudjon lepni az ellenfel babuival
-        if (wPlayer==0)
-        {
-            for (figure* f : _allFigure)
+            Musor regi;
+            set<Musor>::iterator it=musor.begin();
+            for (int i=0;i<_index;i++)
             {
-                f->setMoveable(true); //eredetileg false
+                it++;
+            }
+            regi=*it;
+            musor.erase(it);
+            for (int i=regi.ora*60+regi.perc;i<=regi.ora*60+regi.perc+regi.hossz;i++)
+            {
+                idorend[i%1440]=0;
             }
 
-            for (size_t i=0;i<_figureVectorFirstPlayer.size();i++)
+            int kezdetPercben, vegPercben;
+            bool berakhato=true;
+
+            Musor ujmusor;
+            ujmusor.cim=nev->value();
+            ujmusor.ora=h->intValue();
+            ujmusor.perc=m->intValue();
+            ujmusor.hossz=l->intValue();
+
+            kezdetPercben=h->intValue()*60+m->intValue();
+            vegPercben=kezdetPercben+l->intValue();
+
+            for (int i=kezdetPercben;i<=vegPercben;i++)
             {
-                if (!_changedFocus && _figureVectorFirstPlayer[i]->is_focused())
+                if (idorend[i%1440]!=0)
                 {
-                    focusedIndex=i;
-                    _changedFocus=true;
+                    berakhato=false;
                 }
             }
 
-            for (size_t i=0;i<_figureVectorFirstPlayer.size();i++)
+            if(berakhato)
             {
-                if (focusedIndex==i)
-                {
-                    _figureVectorFirstPlayer[i]->setMoveable(true);
-                }
-            }
-            _stepFigureVector=_figureVectorFirstPlayer;
-        }
-
-        if (wPlayer==1)
-        {
-            for (figure* f : _allFigure)
-            {
-                f->setMoveable(false);
-            }
-
-            for (size_t i=0;i<_figureVectorSecondPlayer.size();i++)
-            {
-                if (!_changedFocus && _figureVectorSecondPlayer[i]->is_focused())
-                {
-                    focusedIndex=i;
-                    _changedFocus=true;
-                }
-            }
-
-            for (size_t i=0;i<_figureVectorSecondPlayer.size();i++)
-            {
-                if (focusedIndex==i)
-                {
-                    _figureVectorSecondPlayer[i]->setMoveable(true);
-                }
-            }
-            _stepFigureVector=_figureVectorSecondPlayer;
-        }
-
-        //fokuszalt babut helyere ugrasztja
-        for (figure* f : _stepFigureVector)
-        {
-            xCoord=round(f->returnXcoord()/_sizeOfField);
-            yCoord=round(f->returnYcoord()/_sizeOfField);
-            if (f->moveable())
-            {
-                if (xCoord>0 && xCoord<8 && yCoord>0 && yCoord<8 && !(xCoord==4 && yCoord==4))
-                {
-                    if (xCoord==yCoord || xCoord+yCoord==8 || xCoord==4 || yCoord==4)// && rules->_table[xCoord-1][yCoord-1]==0)
-                    {
-                        f->setXcoord(xCoord*_sizeOfField);
-                        f->setYcoord(yCoord*_sizeOfField);
-
-                        //if (/*f->whichPlayer()==wPlayer && */rules->_table[xCoord-1][yCoord-1]==0)
-                        {
-                            //cout<<"belep?";
-                            //rules->_table[xCoord-1][yCoord-1]=wPlayer+1;
-                            _xCoord=xCoord;
-                            _yCoord=yCoord;
-                            //cout<<xCoord-1<<" "<<yCoord-1<<endl;
-                            //rules->tableDraw();
-                        }
-
-                        for (figure* g : _allFigure)
-                        {
-                            if (f!=g && f->returnXcoord()==g->returnXcoord() && f->returnYcoord()==g->returnYcoord())
-                            {
-                                f->setXcoord(xCoord*_sizeOfField+20);
-                                f->setYcoord(yCoord*_sizeOfField+20);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        //ha nincs az adott helyen babu akkor kinullazza az adott vektorbeli elemet
-        /*for (int i=0;i<7;i++)
-        {
-            for (int j=0;j<7;j++)
-            {
-                positionReserved=false;
-
-                if (!(i==3 && j==3) && (i==j || i+j==6 || i==3 || j==3))
-                {
-                    for (figure* f : _allFigure)
-                    {
-                        xCoord=f->returnXcoord()/_sizeOfField-1;
-                        yCoord=f->returnYcoord()/_sizeOfField-1;
-
-                        if (i==xCoord && j==yCoord)
-                        {
-                            positionReserved=true;
-                        }
-                    }
-                    if (positionReserved)
-                    {
-                        rules->_table[i][j]=0;
-                        formerXcoord=i;
-                        formerYcoord=j;
-                    }
-                }
-            }
-        }*/
-    }
-
-
-    virtual void makeStep()
-    {
-        setCoord(rules->whichPlayer());
-        if (buttonNextPlayer->changedValue() && _xCoord-1>-1 && _yCoord>-1)// && _xCoord-1<7 && _yCoord-1<7)
-        {
-            //cout<<_xCoord-1<<" "<<_yCoord-1<<endl;
-            if (rules->_table[_xCoord-1][_yCoord-1]==0)
-            {
-                rules->_table[_xCoord-1][_yCoord-1]=rules->whichPlayer()+1;
-            }
-            rules->tableDraw();
-            _changedFocus=false;
-            rules->turn();
-            if (rules->whichPlayer()==0)
-            {
-                staticTextPlayer->setText("1. jatekos jon");
+                musor.insert(ujmusor);
             }
             else
             {
-                staticTextPlayer->setText("2. jatekos jon");
+                musor.insert(regi);
             }
-            _xCoord=-1;
-            _yCoord=-1;
         }
     }
 
-    virtual void takeFigure()
+    void zenetBetolt()
     {
-        if(rules->canTakeFigure())
+        int szabadKezdet=0, szabadVeg=0;
+        if (zene->changedValue())
         {
-            cout<<"malom";
-            if (rules->whichPlayer()==0)
+            for (int i=1;i<1440;i++)
             {
-                for (figure* f : _figureVectorSecondPlayer)
+                if (idorend[i]=0 && idorend[i-1]==1)
                 {
-                    f->setMoveable(true);
+                    szabadKezdet=i;
                 }
-                for (figure* f : _figureVectorFirstPlayer)
+
+                if (idorend[i]=1 && idorend[i-1]==0 && szabadKezdet!=0)
                 {
-                    f->setMoveable(false);
-                }
-            }
-            else
-            {
-                for (figure* f : _figureVectorFirstPlayer)
-                {
-                    f->setMoveable(true);
-                }
-                for (figure* f : _figureVectorSecondPlayer)
-                {
-                    f->setMoveable(false);
+                    szabadVeg=i;
+
+                    Musor ujmusor;
+                    ujmusor.cim="Zene"+intToStringConverter(i);
+                    ujmusor.ora=szabadKezdet/60;
+                    ujmusor.perc=szabadKezdet%60;
+                    ujmusor.hossz=szabadVeg-szabadKezdet;
+                    cout<<szabadVeg-szabadKezdet<<endl;
+
+                    musor.insert(ujmusor);
                 }
             }
         }
@@ -283,17 +243,11 @@ public:
 
     virtual void action()
     {
-        fieldDraw();
-        makeStep();
-        //takeFigure();
-        if (buttonNewGame->changedValue())
-        {
-            newGame();
-        }
-        //setCoord();
-        //std::cout<<rules->canTakeFigure();
-        //std::cout<<rules->nearby(2,4,2,3);
-
+        update();
+        hozzaadMusort();
+        torolElemet();
+        szerkesztElemet();
+        zenetBetolt();
     }
 };
 
@@ -305,5 +259,3 @@ int main()
     return 0;
 }
 
-
-///hf mukodjon a mozgatas - kell javitani a 0 elemu vektort

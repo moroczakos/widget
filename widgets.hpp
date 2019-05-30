@@ -12,13 +12,12 @@ protected:
     Application * _parent;
     bool _focused;
     bool _grabbed;
-    bool _moveable;
-
+    bool _visible;
 public:
 
     virtual void setfocus(bool f);
-    virtual bool is_focused();
     Widget(Application * parent, int x, int y, int sx, int sy);
+    virtual ~Widget(){}; //kerdeses
     virtual bool is_selected(int mouse_x, int mouse_y);
     virtual void draw() = 0;
     virtual void handle(genv::event ev) = 0;
@@ -26,7 +25,6 @@ public:
     virtual bool nullValue();
     virtual bool changedValue() = 0;
     virtual void moveObj(int ex, int ey, int XX, int YY);
-    virtual bool moveable();
     virtual void catchObj(int ex, int ey);
     virtual void releaseObj();
     virtual bool insideObj(int ex, int ey);
@@ -34,5 +32,9 @@ public:
     virtual bool focusable();
     virtual void addElement(std::string);
     virtual void removeElement(std::string);
+    virtual void invisible();
+    virtual void visible();
+    virtual bool is_visible();
+    //virtual void deleteItself();
 };
 #endif // WIDGETS_HPP_INCLUDED

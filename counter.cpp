@@ -25,6 +25,11 @@ std::string counter::value()
     return intToStringConverter(_number);
 }
 
+int counter::intValue()
+{
+    return _number;
+}
+
 bool counter::changedValue()
 {
     if(_number!=_checkFormer && !_canWrite)
@@ -65,24 +70,24 @@ void counter::handle(event ev)
     _changeValue=intToStringConverter(_number);
     //billentyuzet opciok
     switch (ev.keycode){
-        case key_up : if(_number<_max) _number++;
+        case key_up : if(_number<_max) {_number++;} else {_number=_min;};
         break;
-        case key_down : if(_number>_min) _number--;
+        case key_down : if(_number>_min) {_number--;} else {_number=_max;};
         break;
-        case key_pgup : if(_number<=_max-10) _number+=10;
+        case key_pgup : if(_number<=_max-10) {_number+=10;} else {_number=_min;};
         break;
-        case key_pgdn : if(_number>=_min+10) _number-=10;
+        case key_pgdn : if(_number>=_min+10) {_number-=10;} else {_number=_max;};
         break;
     }
 
     //eger opciok
     switch (ev.button){
-        case btn_wheelup : if(_number<_max) _number++;
+        case btn_wheelup : if(_number<_max) {_number++;} else {_number=_min;};
         break;
-        case btn_wheeldown : if(_number>_min) _number--;
+        case btn_wheeldown : if(_number>_min) {_number--;} else {_number=_max;};
         break;
-        case btn_left : if(upArrow(ev) && _number<_max)  _number++;
-                        if(downArrow(ev) && _number>_min) _number--;
+        case btn_left : if(upArrow(ev)) {if(_number<_max) {_number++;} else {_number=_min;};};
+                        if(downArrow(ev)) {if(_number>_min) {_number--;} else {_number=_max;};};
         break;
     }
 

@@ -19,6 +19,7 @@ public:
     virtual bool upArrow(genv::event ev);
     virtual bool downArrow(genv::event ev);
     virtual std::string value();
+    virtual int intValue();
     virtual bool changedValue();
     virtual bool overTheBox(genv::event ev);
     virtual void writeInTheBox(genv::event ev);
