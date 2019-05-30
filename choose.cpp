@@ -22,13 +22,15 @@ choose::choose(Application * parent, int x, int y, int sx, int minimum, std::str
     _row=0;                                 //hanyadik sortol jelenitse meg az elemeket a legordulo menuben
     _checkFormer=_chosenElement;            //ellenorzeshez megnezi hogy az elozo azonos-e a jelenlegivel
     _focusedElement=0;                      //fokuszban levo elem
+    _elementChosen=false;                   //ha elemet kivalsztottunk, azaz a legorduko menure kattintottunk
+
 }
 
 void choose::setElementParam()
 {
     if (_textout.size()>0){
         _elementLimit=_min;
-        if (_textout.size()<_min){              //_elementLimit valtozot allitja be: ha a beolvasott opciok merete kisebb mint a megadott akkor a beolvasott erteket veszi fel kulonben a megadottat (_min)
+        if (_textout.size()<size_t(_min)){              //_elementLimit valtozot allitja be: ha a beolvasott opciok merete kisebb mint a megadott akkor a beolvasott erteket veszi fel kulonben a megadottat (_min)
             _elementLimit=_textout.size();
         }
         _visibleElementNumber=_textout.size()-_elementLimit;    //lathato elemek szama, kod egyszerusitese miatt kell, tul hosszu lenne ha mindig kiszamolnam
@@ -67,12 +69,22 @@ std::string choose::value()
 
 bool choose::changedValue()
 {
-    if(_chosenElement!=_checkFormer)
+    if(_chosenElement!=_checkFormer || _elementChosen)
     {
         _checkFormer=_chosenElement;
         return true;
     }
     return false;
+}
+
+bool choose::elementChosen()
+{
+    return _elementChosen;
+}
+
+void choose::setElementChosen()
+{
+    _elementChosen=false;
 }
 
 //megmodja, hogy adott hataron belul van-e az eger
@@ -90,10 +102,10 @@ void choose::openText(int changeColor)
     gout << move_to(_x,_y+_sy*(_elementNumber-_row + 1)) << color(255,255,255) << box(_size_x+2-20, _sy);
     gout << move_to(_x+1,_y+_sy*(_elementNumber-_row + 1)+1) << color(0+changeColor,0+changeColor,0+changeColor) << box(_size_x-20, _sy-2);
     gout << move_to(_x+3,_y+_sy*(_elementNumber-_row + 1)+gout.cascent()+4) << color(255,255,255);
-    if (gout.twidth(_textout[_elementNumber])>_size_x-30){
+    if (_textout.size()>0 && gout.twidth(_textout[_elementNumber])>_size_x-30){
         gout << genv::text(_textout[_elementNumber].substr(0,(_size_x-30)/gout.twidth("a")));
     }
-    else{
+    else if (_textout.size()>0){
         gout << genv::text(_textout[_elementNumber]);
     }
 }
@@ -118,10 +130,10 @@ void choose::draw()
     gout << move_to(_x+_size_x-2, _y+2) << color(0,0,0) << box(-(20-4), _sy-4);
     gout << move_to(_x+4, _y+gout.cascent()+4) << color(255,255,255);
     //ha kinullazott a vector akkor nem ir ki semmit
-    if(_textout.size()==0){
+    /*if(_textout.size()==0){
         gout << genv::text("");
-    }
-    else if (gout.twidth(_textout[_chosenElement])>_size_x-30){
+    }*/
+    /*else*/ if (gout.twidth(_textout[_chosenElement])>_size_x-30){
         gout << genv::text(_textout[_chosenElement].substr(0,(_size_x-30)/gout.twidth("a")));
     }
     else{
@@ -150,6 +162,7 @@ void choose::optionListDraw(event ev, int from)
             openText(100);
             if (ev.button==btn_left){
                 _chosenElement=i;
+                _elementChosen=true;        //jelzi, hogy elemre lett kattintva
                 _pressedArrow=!_pressedArrow;
             }
         }
@@ -176,7 +189,7 @@ void choose::handle(event ev)
     }
 
 
-    //gomb, iiletve eger esemenyek
+    //gomb, illetve eger esemenyek
     if (_row<_visibleElementNumber && ev.button==btn_wheeldown){
         _row++;
         _focusedElement++;
@@ -196,7 +209,7 @@ void choose::handle(event ev)
         case key_pgdn : _focusedElement=_textout.size()-1; _row=_visibleElementNumber;
         break;
         case key_down : if (_focusedElement<_elementLimit+_row-1) _focusedElement++;                //fokuszalt elem ne menjen ki
-                        else if (_focusedElement<_textout.size()-1) {_row++; _focusedElement++;}    //fokuszalt elem ne menjen ki
+                        else if (size_t(_focusedElement)<_textout.size()-1) {_row++; _focusedElement++;}    //fokuszalt elem ne menjen ki
         break;
         case key_up : if (_focusedElement>0) _focusedElement--;                                     //fokuszalt elem ne menjen ki
                       if (_focusedElement<_row && _focusedElement>=0) _row--;                       //fokuszalt elem ne menjen ki
@@ -233,7 +246,15 @@ void choose::addElement(std::string add)
     if (add!=""){
         _textout.push_back(add);
         setElementParam();
+        if (_textout[0]==""){
+            _textout.erase(_textout.begin());
+        }
     }
+}
+
+void choose::addVector(std::vector<std::string> inVector)
+{
+    _textout=inVector;
 }
 
 //elemet eltavolit, ha nem nulla a vector
@@ -245,13 +266,19 @@ void choose::removeElement(std::string reMove)
     }
 }
 
-//kitorli a vektort es visszaadja az ktualisan kijelolt elem indexet
+//kitorli a vektort es visszaadja az aktualisan kijelolt elem indexet
 int choose::clearElement()
 {
     int index=_chosenElement%_textout.size();
     _textout.clear();
+    _textout.push_back("");
     setElementParam();
     return index;
+}
+
+int choose::returnIndex()
+{
+    return _chosenElement;
 }
 
 //meghatarozza a _chosenElement erteket

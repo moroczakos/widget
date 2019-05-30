@@ -33,7 +33,7 @@ void dinamicText::draw()
     gout << move_to(_x+2, _y+2) << color(0,0,0) << box(_size_x-4, _size_y-4);
     gout << color(255,255,255);
     //az utolso lathato karaktereket irja ki a szelessegtol fuggoen
-    if (_szoveg.length()>(_size_x-10)/gout.twidth("a")){
+    if (_szoveg.length()>size_t((_size_x-10)/gout.twidth("a"))){
         gout << move_to(_x+4, _y+20) << text(_szoveg.substr(_szoveg.length()-(_size_x-10)/gout.twidth("a"),_szoveg.length()));
     }
     else{

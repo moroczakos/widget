@@ -9,7 +9,7 @@ class choose : public Widget {
 protected:
     int _min;
     int _sy;
-    bool _pressedArrow, _pressedScroll; //legordules
+    bool _pressedArrow, _pressedScroll, _elementChosen; //legordules
     std::string _fileName;
     std::vector<std::string> _textout;
     int _chosenElement, _elementNumber, _elementLimit, _row, _visibleElementNumber, _checkFormer, _focusedElement;
@@ -24,11 +24,16 @@ public:
     virtual void optionListDraw(genv::event ev, int from);
     virtual std::string value();
     virtual bool changedValue();
+    virtual bool elementChosen();
+    virtual void setElementChosen();
     virtual void addElement(std::string);
+    virtual void addVector(std::vector<std::string>);
     virtual void removeElement(std::string);
     virtual int clearElement();
     virtual void getIndex(int index);
+    virtual int returnIndex();
     virtual void setElementParam();
+
 
 };
 

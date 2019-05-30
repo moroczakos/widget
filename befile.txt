@@ -1,7 +1,3 @@
-a
-b
-c
-d
-e
-f
-g
+alberlet (-60000)
+rezsi (-10000)
+kozos koltseg (-25000)

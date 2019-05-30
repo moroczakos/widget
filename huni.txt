@@ -1,0 +1,4 @@
+0
+ProbaNev;10
+Proba2;-1110
+Huni ebede;1000

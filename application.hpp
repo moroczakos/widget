@@ -11,7 +11,6 @@ class Application
 protected:
     std::vector<Widget*> widgets;
     std::ofstream _log;
-    int _posx, _posy;
 public:
     Application();
     virtual ~Application();
@@ -20,8 +19,6 @@ public:
         widgets.push_back(w);
     }
     virtual void action(){};
-    virtual int returnXpos();
-    virtual int returnYpos();
 };
 
 #endif // APPLICATION_HPP_INCLUDED

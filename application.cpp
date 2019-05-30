@@ -24,15 +24,13 @@ void Application::event_loop(int XX, int YY) {
     while(gin >> ev && ev.keycode!=key_escape) {
         gout<<move_to(0,0)<<color(0,0,0)<<box(XX,YY);
 
-        _posx=ev.pos_x;
-        _posy=ev.pos_y;
-
         //if(ev.keycode == key_enter || ev.button==btn_left){
             action();
         //}
 
         //widgetek kirajzolasa
         for (Widget * w : widgets) {
+            if (w->is_visible())
             w->draw();
         }
 
@@ -72,7 +70,7 @@ void Application::event_loop(int XX, int YY) {
                 rightclick=true;
                 for (Widget * w : widgets)
                 {
-                    if(w->insideObj(ev.pos_x, ev.pos_y) && w->moveable())
+                    if(w->insideObj(ev.pos_x, ev.pos_y))
                     {
                         if (catched)
                             catched->releaseObj();
@@ -103,28 +101,22 @@ void Application::event_loop(int XX, int YY) {
             ++focus%=widgets.size();
 
             //statikus elemeket kihagy a fokuszalasban
-            if (!widgets[focus]->focusable()){
+            if (!widgets[focus]->focusable() || !widgets[focus]->is_visible()){
                 ++focus%=widgets.size();
             }
-            if ( widgets[focus]->focusable()) //uj
-            {
-                widgets[focus]->setfocus(true);
-            }
+            widgets[focus]->setfocus(true);
+
         }
 
         //egerkatintara fokuszba kerul
         if (ev.type == ev_mouse && (ev.button==btn_left || ev.button==btn_right)) {
             for (size_t i=0;i<widgets.size();i++) {
-                if (widgets[i]->is_selected(ev.pos_x, ev.pos_y)) {
+                if (widgets[i]->is_visible() && widgets[i]->is_selected(ev.pos_x, ev.pos_y)) {
                     if (focus!=-1){
                         widgets[focus]->setfocus(false);
                     }
                     focus = i;
-                    //widgets[i]->setfocus(true);
-                    if ( widgets[i]->focusable()) //uj
-                    {
-                        widgets[i]->setfocus(true);
-                    }
+                    widgets[i]->setfocus(true);
                 }
             }
         }
@@ -132,12 +124,3 @@ void Application::event_loop(int XX, int YY) {
     }
 }
 
-int Application::returnXpos()
-{
-    return _posx;
-}
-
-int Application::returnYpos()
-{
-    return _posy;
-}
